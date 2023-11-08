@@ -92,8 +92,9 @@ def select_input_dataset(norm_mode):
     """
     file_suffix = "_normalized" if norm_mode else ""
     filename = f"CO_from_radialBP_resampled_repositioned_128Hz{file_suffix}.csv"
-
-    dataset = pd.read_csv(filename)
+    
+    pathname = 'Data/{}'.format(filename)
+    dataset = pd.read_csv(pathname)
     dataset = dataset.drop(['id', 'HR', 'CT_sys', 'aoMAP'], axis=1)
     dataset = check_for_nan_values(dataset)
 
@@ -121,13 +122,13 @@ def load_train_test_val_indices():
     Returns:
         tuple: A tuple containing train_val_indices, train_indices, test_indices, val_indices.
     """
-    with open('train_val_indices', 'rb') as f:
+    with open('TrainedModels/SavedTrainValTestSplitIndices/train_val_indices', 'rb') as f:
         train_val_indices = pickle.load(f)
-    with open('test_indices', 'rb') as f:
+    with open('TrainedModels/SavedTrainValTestSplitIndices/test_indices', 'rb') as f:
         test_indices = pickle.load(f)
-    with open('train_indices', 'rb') as f:
+    with open('TrainedModels/SavedTrainValTestSplitIndices/train_indices', 'rb') as f:
         train_indices = pickle.load(f)
-    with open('val_indices', 'rb') as f:
+    with open('TrainedModels/SavedTrainValTestSplitIndices/val_indices', 'rb') as f:
         val_indices = pickle.load(f)
     
     return train_val_indices, train_indices, test_indices, val_indices
@@ -192,7 +193,7 @@ def artificial_neural_network(selected_batch_size, selected_epochs, X_train, X_t
     model.compile(optimizer='adam', loss='mean_squared_error')
 
     # Fitting the ANN to the Training set
-    model.fit(X_train, y_train, batch_size=selected_batch_size, epochs=manual_epochs, verbose=verbose)
+    model.fit(X_train, y_train, batch_size=selected_batch_size, epochs=selected_epochs, verbose=verbose)
     y_pred = model.predict(X_test)
 
     return model, y_pred
@@ -311,13 +312,13 @@ def get_and_save_train_test_val_indices(data,select_test_size,select_val_rel_siz
     train_indices = indices_train
     # print(indices_val.shape)
 
-    with open('train_val_indices', 'wb') as f:
+    with open('TrainedModels/SavedTrainValTestSplitIndices/train_val_indices', 'wb') as f:
         pickle.dump(indices_train_val, f)
-    with open('test_indices', 'wb') as f:
+    with open('TrainedModels/SavedTrainValTestSplitIndices/test_indices', 'wb') as f:
         pickle.dump(indices_test, f)
-    with open('train_indices', 'wb') as f:
+    with open('TrainedModels/SavedTrainValTestSplitIndices/train_indices', 'wb') as f:
         pickle.dump(indices_train, f)
-    with open('val_indices', 'wb') as f:
+    with open('TrainedModels/SavedTrainValTestSplitIndices/val_indices', 'wb') as f:
         pickle.dump(indices_val, f)
     
 
